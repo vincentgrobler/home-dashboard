@@ -1,11 +1,12 @@
 .dashboard {
   height: 100vh;
   width: 100vw;
-  padding: 24px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .header {
@@ -14,28 +15,45 @@
   gap: 16px;
   padding: 0 8px;
   flex-shrink: 0;
+  height: 40px;
 }
 
-.top-row {
+.header-date {
+  font-size: 22px;
+  font-weight: 300;
+}
+
+/* Main Grid - 3 columns */
+.main-grid {
   display: grid;
-  grid-template-columns: 220px 1fr 320px;
-  gap: 20px;
+  grid-template-columns: 200px 1fr 280px;
+  gap: 16px;
   flex: 1;
   min-height: 0;
 }
 
-.bottom-section {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 20px;
-  height: 140px;
-  flex-shrink: 0;
+.weather-area {
+  display: flex;
+  align-items: flex-start;
 }
 
-.bottom-left {
+.events-area {
+  min-height: 0;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Bottom Row */
+.bottom-row {
   display: flex;
   gap: 16px;
   align-items: center;
+  height: 120px;
+  flex-shrink: 0;
 }
 
 .viki-orb-container {
@@ -53,34 +71,28 @@
   flex: 1;
 }
 
-.energy-panel {
-  display: flex;
-  gap: 12px;
-}
-
-/* Weather Section - No background card */
+/* Weather Section - No background */
 .weather-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .weather-visual {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .cloud-sun-icon {
   position: relative;
-  width: 100px;
-  height: 80px;
+  width: 90px;
+  height: 70px;
 }
 
 .sun-behind {
   position: absolute;
-  font-size: 50px;
+  font-size: 45px;
   top: 0;
   right: 0;
   filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.5));
@@ -88,7 +100,7 @@
 
 .cloud-front {
   position: absolute;
-  font-size: 70px;
+  font-size: 60px;
   bottom: 0;
   left: 0;
   filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
@@ -99,14 +111,208 @@
 }
 
 .weather-temp {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: 200;
   line-height: 1;
 }
 
 .weather-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
-  margin-top: 8px;
-  line-height: 1.5;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Events Card */
+.events-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.events-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.events-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.events-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+}
+
+.events-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.event-item {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+.event-time {
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.event-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.meal-item {
+  border-left: 3px solid var(--accent);
+}
+
+/* Air Purifier Compact */
+.purifier-card-compact {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.purifier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.purifier-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.power-btn-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.power-btn-small.off {
+  background: #444;
+  color: #888;
+}
+
+.purifier-actions-compact {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn-small {
+  width: 40px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.action-btn-small.active {
+  background: var(--accent);
+}
+
+.purifier-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+/* Energy Cards Compact */
+.energy-card-compact {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 12px 14px;
+  flex: 1;
+}
+
+.energy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.energy-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.energy-toggle {
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.energy-chart-container {
+  height: 45px;
+  margin: 6px 0;
+}
+
+.energy-chart-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.energy-values {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.energy-value {
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.energy-unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+.energy-cost {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 500;
 }

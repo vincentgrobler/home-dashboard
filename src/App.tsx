@@ -32,48 +32,40 @@ function App() {
         <h1 className="header-date">{formatDate(currentDate)}</h1>
       </header>
 
-      {/* Top Row: Weather | Events | Air Purifier */}
-      <div className="top-row">
-        <WeatherCard />
-        <EventsCard />
-        <AirPurifierCard />
-      </div>
-
-      {/* Bottom Row: Viki Orb + Status Cards | Energy Cards */}
-      <div className="bottom-section">
-        <div className="bottom-left">
-          <motion.div 
-            className="viki-orb-container"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <VikiOrb />
-          </motion.div>
-          
-          <div className="status-cards">
-            <StatusCard 
-              icon="📡" 
-              label="Wi-Fi" 
-              type="wifi"
-            />
-            <StatusCard 
-              icon="📺" 
-              label="MainTV" 
-              type="firetv"
-              deviceId="main"
-            />
-            <StatusCard 
-              icon="📺" 
-              label="TV Bedroom" 
-              type="firetv"
-              deviceId="bedroom"
-            />
-          </div>
+      {/* Main Grid */}
+      <div className="main-grid">
+        {/* Left: Weather */}
+        <div className="weather-area">
+          <WeatherCard />
         </div>
 
-        <div className="energy-panel">
+        {/* Center: Events */}
+        <div className="events-area">
+          <EventsCard />
+        </div>
+
+        {/* Right: Air Purifier + Energy */}
+        <div className="right-panel">
+          <AirPurifierCard />
           <EnergyCard type="electricity" />
           <EnergyCard type="gas" />
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="bottom-row">
+        <motion.div 
+          className="viki-orb-container"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <VikiOrb />
+        </motion.div>
+        
+        <div className="status-cards">
+          <StatusCard icon="📡" label="Wi-Fi" type="wifi" />
+          <StatusCard icon="📺" label="MainTV" type="firetv" deviceId="main" />
+          <StatusCard icon="📺" label="TV Bedroom" type="firetv" deviceId="bedroom" />
         </div>
       </div>
     </div>
