@@ -32,20 +32,20 @@ function App() {
         <h1 className="header-date">{formatDate(currentDate)}</h1>
       </header>
 
-      {/* Main Grid */}
-      <div className="main-grid">
+      {/* Main Content Grid */}
+      <div className="main-content">
         {/* Left: Weather */}
-        <div className="weather-area">
+        <div className="left-column">
           <WeatherCard />
         </div>
 
-        {/* Center: Events */}
-        <div className="events-area">
+        {/* Center: Events (Today + Tomorrow) */}
+        <div className="center-column">
           <EventsCard />
         </div>
 
         {/* Right: Air Purifier + Energy */}
-        <div className="right-panel">
+        <div className="right-column">
           <AirPurifierCard />
           <EnergyCard type="electricity" />
           <EnergyCard type="gas" />

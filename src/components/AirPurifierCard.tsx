@@ -1,31 +1,16 @@
 import { useState } from 'react';
 
-interface AirPurifierState {
-  isOn: boolean;
-  mode: 'cooling' | 'heating' | 'airwave';
-}
-
 export default function AirPurifierCard() {
-  const [state, setState] = useState<AirPurifierState>({
-    isOn: false,
-    mode: 'cooling',
-  });
-
-  const togglePower = () => {
-    setState(s => ({ ...s, isOn: !s.isOn }));
-  };
-
-  const setMode = (mode: AirPurifierState['mode']) => {
-    setState(s => ({ ...s, mode }));
-  };
+  const [isOn, setIsOn] = useState(false);
+  const [mode, setMode] = useState<'cooling' | 'heating' | 'airwave'>('cooling');
 
   return (
     <div className="card purifier-card-compact">
       <div className="purifier-header">
         <h3 className="purifier-title">Air Purifier</h3>
         <button 
-          className={`power-btn-small ${state.isOn ? '' : 'off'}`}
-          onClick={togglePower}
+          className={`power-btn ${isOn ? '' : 'off'}`}
+          onClick={() => setIsOn(!isOn)}
         >
           ⏻
         </button>
@@ -33,28 +18,39 @@ export default function AirPurifierCard() {
 
       <div className="purifier-actions-compact">
         <button 
-          className={`action-btn-small ${state.mode === 'cooling' ? 'active' : ''}`}
+          className={`action-btn-sm ${mode === 'cooling' ? 'active' : ''}`}
           onClick={() => setMode('cooling')}
         >
           ❄️
         </button>
         <button 
-          className={`action-btn-small ${state.mode === 'heating' ? 'active' : ''}`}
+          className={`action-btn-sm ${mode === 'heating' ? 'active' : ''}`}
           onClick={() => setMode('heating')}
         >
           🔥
         </button>
         <button 
-          className={`action-btn-small ${state.mode === 'airwave' ? 'active' : ''}`}
+          className={`action-btn-sm ${mode === 'airwave' ? 'active' : ''}`}
           onClick={() => setMode('airwave')}
         >
           💨
         </button>
       </div>
+
+      <div className="purifier-stats-compact">
+        <div className="stat-mini">
+          <span className="stat-val">2h</span>
+          <span className="stat-lbl">Timer</span>
+        </div>
+        <div className="stat-mini">
+          <span className="stat-val">36%</span>
+          <span className="stat-lbl">Humidity</span>
+        </div>
+      </div>
       
-      {!state.isOn && (
+      {!isOn && (
         <div className="purifier-overlay">
-          Not connected
+          VeSync login required
         </div>
       )}
     </div>
