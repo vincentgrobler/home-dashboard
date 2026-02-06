@@ -32,49 +32,48 @@ function App() {
         <h1 className="header-date">{formatDate(currentDate)}</h1>
       </header>
 
-      {/* Left Column - Weather */}
-      <div className="left-column">
+      {/* Top Row: Weather | Events | Air Purifier */}
+      <div className="top-row">
         <WeatherCard />
-      </div>
-
-      {/* Center - Events */}
-      <EventsCard />
-
-      {/* Right Panel */}
-      <div className="right-panel">
+        <EventsCard />
         <AirPurifierCard />
-        <EnergyCard type="electricity" />
-        <EnergyCard type="gas" />
       </div>
 
-      {/* Bottom Row */}
-      <div className="bottom-row">
-        <motion.div 
-          className="viki-orb-container"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <VikiOrb />
-        </motion.div>
-        
-        <div className="status-cards">
-          <StatusCard 
-            icon="📡" 
-            label="Wi-Fi" 
-            type="wifi"
-          />
-          <StatusCard 
-            icon="📺" 
-            label="MainTV" 
-            type="firetv"
-            deviceId="main"
-          />
-          <StatusCard 
-            icon="📺" 
-            label="TV Bedroom" 
-            type="firetv"
-            deviceId="bedroom"
-          />
+      {/* Bottom Row: Viki Orb + Status Cards | Energy Cards */}
+      <div className="bottom-section">
+        <div className="bottom-left">
+          <motion.div 
+            className="viki-orb-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <VikiOrb />
+          </motion.div>
+          
+          <div className="status-cards">
+            <StatusCard 
+              icon="📡" 
+              label="Wi-Fi" 
+              type="wifi"
+            />
+            <StatusCard 
+              icon="📺" 
+              label="MainTV" 
+              type="firetv"
+              deviceId="main"
+            />
+            <StatusCard 
+              icon="📺" 
+              label="TV Bedroom" 
+              type="firetv"
+              deviceId="bedroom"
+            />
+          </div>
+        </div>
+
+        <div className="energy-panel">
+          <EnergyCard type="electricity" />
+          <EnergyCard type="gas" />
         </div>
       </div>
     </div>

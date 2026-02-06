@@ -1,9 +1,48 @@
-.left-column {
+.dashboard {
+  height: 100%;
+  width: 100%;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.right-panel {
-  grid-row: 2 / 4;
+.top-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 320px;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+}
+
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  height: 180px;
+}
+
+.bottom-left {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.viki-orb-container {
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-cards {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.energy-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
