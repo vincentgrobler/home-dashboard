@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import WeatherCard from './components/WeatherCard';
 import EventsCard from './components/EventsCard';
@@ -10,11 +10,30 @@ import './App.css';
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+
+  // Manual refresh function
+  const handleRefresh = useCallback(() => {
+    setRefreshKey(k => k + 1);
+    setLastRefresh(new Date());
+    setCurrentDate(new Date());
+  }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentDate(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
+    // Update date every minute
+    const dateTimer = setInterval(() => setCurrentDate(new Date()), 60000);
+    
+    // Auto-refresh every 15 minutes
+    const refreshTimer = setInterval(() => {
+      handleRefresh();
+    }, 15 * 60 * 1000);
+    
+    return () => {
+      clearInterval(dateTimer);
+      clearInterval(refreshTimer);
+    };
+  }, [handleRefresh]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-GB', {
@@ -24,31 +43,45 @@ function App() {
     });
   };
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="dashboard">
       {/* Header */}
       <header className="header">
         <span style={{ fontSize: '24px' }}>—</span>
         <h1 className="header-date">{formatDate(currentDate)}</h1>
+        <div className="header-spacer" />
+        <button className="refresh-btn" onClick={handleRefresh} title="Refresh dashboard">
+          🔄
+        </button>
+        <span className="last-refresh">
+          {formatTime(lastRefresh)}
+        </span>
       </header>
 
       {/* Main Content Grid */}
       <div className="main-content">
         {/* Left: Weather */}
         <div className="left-column">
-          <WeatherCard />
+          <WeatherCard key={`weather-${refreshKey}`} />
         </div>
 
         {/* Center: Events (Today + Tomorrow) */}
         <div className="center-column">
-          <EventsCard />
+          <EventsCard key={`events-${refreshKey}`} />
         </div>
 
         {/* Right: Air Purifier + Energy */}
         <div className="right-column">
           <AirPurifierCard />
-          <EnergyCard type="electricity" />
-          <EnergyCard type="gas" />
+          <EnergyCard key={`elec-${refreshKey}`} type="electricity" />
+          <EnergyCard key={`gas-${refreshKey}`} type="gas" />
         </div>
       </div>
 
