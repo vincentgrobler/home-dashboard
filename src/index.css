@@ -1,0 +1,355 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1f;
+  --bg-card: #2a2a32;
+  --bg-card-dark: #222228;
+  --accent: #f5a623;
+  --accent-glow: rgba(245, 166, 35, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #888899;
+  --success: #4ade80;
+  --error: #f87171;
+  --border-radius: 24px;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard {
+  height: 100%;
+  width: 100%;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 200px 1fr 320px;
+  grid-template-rows: auto 1fr auto;
+  gap: 20px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-dark {
+  background: var(--bg-card-dark);
+}
+
+/* Header */
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 8px;
+}
+
+.header-date {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text-primary);
+}
+
+/* Weather Card */
+.weather-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.weather-icon {
+  font-size: 64px;
+  margin-bottom: 8px;
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: 200;
+}
+
+.weather-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Events Card */
+.events-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.events-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.events-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.event-item {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.event-time {
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.event-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.meal-item {
+  border-left: 3px solid var(--accent);
+}
+
+/* Right Panel */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Air Purifier Card */
+.purifier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.purifier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.purifier-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.power-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.power-btn.off {
+  background: #444;
+  color: #888;
+}
+
+.purifier-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-btn.active {
+  background: var(--accent);
+  color: #000;
+}
+
+.action-btn-icon {
+  font-size: 20px;
+}
+
+.purifier-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-icon {
+  font-size: 20px;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Energy Cards */
+.energy-card {
+  flex: 1;
+}
+
+.energy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.energy-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.energy-toggle {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.energy-chart {
+  height: 60px;
+  position: relative;
+  margin: 12px 0;
+}
+
+.energy-value {
+  font-size: 24px;
+  font-weight: 300;
+  text-align: right;
+}
+
+.energy-unit {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Bottom Row */
+.bottom-row {
+  grid-column: 1 / 3;
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+/* Viki Orb */
+.viki-orb-container {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Status Cards */
+.status-cards {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.status-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 8px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.status-indicator.online {
+  background: var(--success);
+  box-shadow: 0 0 10px var(--success);
+}
+
+.status-indicator.offline {
+  background: var(--error);
+  box-shadow: 0 0 10px var(--error);
+}
+
+.status-icon {
+  font-size: 40px;
+  opacity: 0.8;
+}
+
+.status-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* Chart SVG */
+.chart-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.chart-area {
+  fill: url(#chartGradient);
+}
+
+.chart-dot {
+  fill: var(--accent);
+}

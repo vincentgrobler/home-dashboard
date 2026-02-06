@@ -1,0 +1,9 @@
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-panel {
+  grid-row: 2 / 4;
+}
