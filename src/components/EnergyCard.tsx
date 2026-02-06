@@ -106,43 +106,71 @@ export default function EnergyCard({ type }: EnergyCardProps) {
     }
 
     const max = Math.max(...data.chartData);
+    const min = Math.min(...data.chartData);
+    const range = max - min || 1;
     const width = 100;
     const height = 50;
+    const padding = 8;
     
-    // Create smooth bezier curve points
+    // Create points with better vertical distribution
     const points = data.chartData.map((v, i) => ({
-      x: (i / 9) * width,
-      y: height - (v / max) * (height - 10) - 5
+      x: (i / (data.chartData.length - 1)) * width,
+      y: padding + (1 - (v - min) / range) * (height - padding * 2)
     }));
     
-    // Generate smooth path using bezier curves
+    // Generate smooth cubic bezier path
     let path = `M ${points[0].x},${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      const prev = points[i - 1];
-      const curr = points[i];
-      const cpx = (prev.x + curr.x) / 2;
-      path += ` Q ${prev.x + (curr.x - prev.x) * 0.5},${prev.y} ${cpx},${(prev.y + curr.y) / 2}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[Math.max(0, i - 1)];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = points[Math.min(points.length - 1, i + 2)];
+      
+      // Catmull-Rom to Bezier conversion for smooth curves
+      const tension = 0.3;
+      const cp1x = p1.x + (p2.x - p0.x) * tension;
+      const cp1y = p1.y + (p2.y - p0.y) * tension;
+      const cp2x = p2.x - (p3.x - p1.x) * tension;
+      const cp2y = p2.y - (p3.y - p1.y) * tension;
+      
+      path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
     }
-    // Final point
-    const last = points[points.length - 1];
-    path += ` T ${last.x},${last.y}`;
     
-    // Area path
+    // Area path for gradient fill
     const areaPath = path + ` L ${width},${height} L 0,${height} Z`;
+    
+    // First point for indicator
+    const firstPoint = points[0];
 
     return (
       <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 50 }} preserveAspectRatio="none">
         <defs>
-          <linearGradient id={`gradient-${type}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.4" />
+          <linearGradient id={`area-gradient-${type}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.3" />
             <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
           </linearGradient>
+          <filter id={`glow-${type}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
-        <path d={areaPath} fill={`url(#gradient-${type})`} />
-        <path d={path} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
-        {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--accent)" />
-        ))}
+        {/* Gradient fill under curve */}
+        <path d={areaPath} fill={`url(#area-gradient-${type})`} />
+        {/* Glowing line */}
+        <path 
+          d={path} 
+          fill="none" 
+          stroke="var(--accent)" 
+          strokeWidth="2.5" 
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          filter={`url(#glow-${type})`}
+        />
+        {/* Single indicator dot at start */}
+        <circle cx={firstPoint.x} cy={firstPoint.y} r="4" fill="var(--bg-card)" stroke="var(--accent)" strokeWidth="2" />
       </svg>
     );
   };
