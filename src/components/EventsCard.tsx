@@ -6,6 +6,10 @@ interface Event {
   type: 'calendar' | 'meal';
 }
 
+interface MealsBySlot {
+  [slot: string]: string[];
+}
+
 const CALENDAR_URL = 'https://calendar.google.com/calendar/ical/family11116426684739662442%40group.calendar.google.com/private-5a3d661447bc3df11465434fa3a1cb46/basic.ics';
 
 // V.I.K.I. Supabase config
@@ -40,26 +44,22 @@ async function authenticateViki(): Promise<string | null> {
   try {
     const res = await fetch(`${VIKI_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
-      headers: {
-        'apikey': VIKI_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'apikey': VIKI_ANON_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: VIKI_EMAIL, password: VIKI_PASSWORD })
     });
-    
     if (res.ok) {
       const data = await res.json();
       return data.access_token;
     }
-  } catch (e) {
-    console.error('V.I.K.I. auth failed:', e);
-  }
+  } catch (e) { console.error('V.I.K.I. auth failed:', e); }
   return null;
 }
 
 export default function EventsCard() {
   const [todayEvents, setTodayEvents] = useState<Event[]>([]);
   const [tomorrowEvents, setTomorrowEvents] = useState<Event[]>([]);
+  const [todayMeals, setTodayMeals] = useState<MealsBySlot>({});
+  const [tomorrowMeals, setTomorrowMeals] = useState<MealsBySlot>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -70,7 +70,8 @@ export default function EventsCard() {
       tomorrow.setDate(tomorrow.getDate() + 1);
 
       const calendarEvents: { date: Date; event: Event }[] = [];
-      const meals: { date: Date; event: Event }[] = [];
+      const todayMealsBySlot: MealsBySlot = {};
+      const tomorrowMealsBySlot: MealsBySlot = {};
 
       // Fetch calendar events
       try {
@@ -126,50 +127,41 @@ export default function EventsCard() {
           const todayStr = today.toISOString().split('T')[0];
           const tomorrowStr = tomorrow.toISOString().split('T')[0];
           
-          // Fetch planned meals for today and tomorrow
           const plannedRes = await fetch(
             `${VIKI_SUPABASE_URL}/rest/v1/planned_meals?select=*,meals(name)&date=gte.${todayStr}&date=lte.${tomorrowStr}`,
-            {
-              headers: {
-                'apikey': VIKI_ANON_KEY,
-                'Authorization': `Bearer ${accessToken}`
-              }
-            }
+            { headers: { 'apikey': VIKI_ANON_KEY, 'Authorization': `Bearer ${accessToken}` } }
           );
           
           if (plannedRes.ok) {
             const planned = await plannedRes.json();
             planned.forEach((pm: any) => {
-              const mealDate = new Date(pm.date + 'T00:00:00');
-              const slot = pm.slot || 'Dinner';
+              const mealDateStr = pm.date;
+              const slot = (pm.slot || 'dinner').charAt(0).toUpperCase() + (pm.slot || 'dinner').slice(1);
               const mealName = pm.meals?.name || 'Planned meal';
               
-              meals.push({
-                date: mealDate,
-                event: {
-                  time: slot.charAt(0).toUpperCase() + slot.slice(1),
-                  title: `🍽️ ${mealName}`,
-                  type: 'meal'
-                }
-              });
+              if (mealDateStr === todayStr) {
+                if (!todayMealsBySlot[slot]) todayMealsBySlot[slot] = [];
+                todayMealsBySlot[slot].push(mealName);
+              } else if (mealDateStr === tomorrowStr) {
+                if (!tomorrowMealsBySlot[slot]) tomorrowMealsBySlot[slot] = [];
+                tomorrowMealsBySlot[slot].push(mealName);
+              }
             });
           }
         } catch (e) { console.error('V.I.K.I. fetch failed:', e); }
       }
 
-      // Combine and sort
-      const allEvents = [...calendarEvents, ...meals];
-      
+      // Sort calendar events
       const sortEvents = (events: Event[]) => events.sort((a, b) => {
-        if (a.type === 'meal' && b.type !== 'meal') return 1;
-        if (b.type === 'meal' && a.type !== 'meal') return -1;
         if (a.time === 'All day') return -1;
         if (b.time === 'All day') return 1;
         return a.time.localeCompare(b.time);
       });
       
-      setTodayEvents(sortEvents(allEvents.filter(e => e.date.getTime() === today.getTime()).map(e => e.event)));
-      setTomorrowEvents(sortEvents(allEvents.filter(e => e.date.getTime() === tomorrow.getTime()).map(e => e.event)));
+      setTodayEvents(sortEvents(calendarEvents.filter(e => e.date.getTime() === today.getTime()).map(e => e.event)));
+      setTomorrowEvents(sortEvents(calendarEvents.filter(e => e.date.getTime() === tomorrow.getTime()).map(e => e.event)));
+      setTodayMeals(todayMealsBySlot);
+      setTomorrowMeals(tomorrowMealsBySlot);
       setLoading(false);
     };
 
@@ -178,15 +170,36 @@ export default function EventsCard() {
     return () => clearInterval(interval);
   }, []);
 
+  const renderMeals = (mealsBySlot: MealsBySlot) => {
+    const slots = Object.keys(mealsBySlot);
+    if (slots.length === 0) return null;
+    
+    return (
+      <div className="meals-section">
+        {slots.map(slot => (
+          <div key={slot} className="meal-slot">
+            <div className="meal-slot-header">
+              <span className="meal-icon">🍽️</span>
+              <span className="meal-slot-name">{slot}</span>
+            </div>
+            <div className="meal-dishes">
+              {mealsBySlot[slot].map((dish, idx) => (
+                <span key={idx} className="meal-chip">{dish}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderEvents = (events: Event[], emptyMsg: string) => (
     <div className="events-list">
-      {loading ? (
-        <div className="events-empty">Loading...</div>
-      ) : events.length === 0 ? (
+      {events.length === 0 ? (
         <div className="events-empty">{emptyMsg}</div>
       ) : (
         events.map((event, idx) => (
-          <div key={idx} className={`event-item ${event.type === 'meal' ? 'meal-item' : ''}`}>
+          <div key={idx} className="event-item">
             <div className="event-time">{event.time}</div>
             <div className="event-title">{event.title}</div>
           </div>
@@ -199,11 +212,31 @@ export default function EventsCard() {
     <div className="events-container">
       <div className="card card-dark events-card">
         <h2 className="events-title">What is happening today</h2>
-        {renderEvents(todayEvents, 'No events today')}
+        {loading ? (
+          <div className="events-empty">Loading...</div>
+        ) : (
+          <>
+            {renderEvents(todayEvents, 'No events')}
+            {renderMeals(todayMeals)}
+            {todayEvents.length === 0 && Object.keys(todayMeals).length === 0 && (
+              <div className="events-empty">Nothing planned</div>
+            )}
+          </>
+        )}
       </div>
       <div className="card card-dark events-card">
         <h2 className="events-title">What is happening tomorrow</h2>
-        {renderEvents(tomorrowEvents, 'No events tomorrow')}
+        {loading ? (
+          <div className="events-empty">Loading...</div>
+        ) : (
+          <>
+            {renderEvents(tomorrowEvents, 'No events')}
+            {renderMeals(tomorrowMeals)}
+            {tomorrowEvents.length === 0 && Object.keys(tomorrowMeals).length === 0 && (
+              <div className="events-empty">Nothing planned</div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

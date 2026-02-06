@@ -139,8 +139,8 @@ export default function EnergyCard({ type }: EnergyCardProps) {
     // Area path for gradient fill
     const areaPath = path + ` L ${width},${height} L 0,${height} Z`;
     
-    // First point for indicator
-    const firstPoint = points[0];
+    // First point for indicator (keeping for reference but not rendering)
+    // const firstPoint = points[0];
 
     return (
       <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 50 }} preserveAspectRatio="none">
@@ -170,7 +170,6 @@ export default function EnergyCard({ type }: EnergyCardProps) {
           filter={`url(#glow-${type})`}
         />
         {/* Single indicator dot at start */}
-        <circle cx={firstPoint.x} cy={firstPoint.y} r="4" fill="var(--bg-card)" stroke="var(--accent)" strokeWidth="2" />
       </svg>
     );
   };
