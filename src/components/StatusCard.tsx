@@ -41,7 +41,7 @@ export default function StatusCard({ icon, label, type, deviceId }: StatusCardPr
     };
 
     checkStatus();
-    const interval = setInterval(checkStatus, 15000); // Check every 15s
+    const interval = setInterval(checkStatus, 60000); // Check every 60s
     
     if (type === 'wifi') {
       const handleOnline = () => { setIsOnline(true); setState('connected'); };
