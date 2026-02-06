@@ -1,132 +1,85 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+
+export type OrbState = "idle" | "thinking" | "speaking";
+
+const container = {
+  width: 100,
+  height: 100,
+  position: "relative" as const,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const glow = {
+  position: "absolute" as const,
+  width: 90,
+  height: 90,
+  borderRadius: "50%",
+  background: "radial-gradient(circle, rgba(0,220,255,0.6), rgba(0,120,255,0.15), transparent)",
+};
+
+const core = {
+  width: 50,
+  height: 50,
+  borderRadius: "50%",
+  background: "radial-gradient(circle at 30% 30%, #8fe9ff, #0bbcd6 60%, #056b8a)",
+};
+
+// Cast to any to avoid strict Framer Motion type checks
+const variants: any = {
+  glow: {
+    thinking: {
+      scale: [1, 1.3, 1],
+      opacity: [0.4, 0.7, 0.4],
+      filter: ["blur(12px)", "blur(20px)", "blur(12px)"],
+      transition: { duration: 2, ease: "easeInOut", repeat: Infinity }
+    },
+  },
+  core: {
+    thinking: {
+      scale: [0.95, 1.05, 0.95],
+      rotate: [0, 360],
+      borderRadius: [
+        "50% 50% 50% 50% / 50% 50% 50% 50%", 
+        "60% 40% 40% 60% / 60% 40% 60% 40%", 
+        "50% 60% 30% 70% / 60% 30% 70% 40%",
+        "40% 60% 60% 40% / 40% 60% 60% 40%", 
+        "60% 40% 30% 70% / 70% 30% 50% 50%", 
+        "30% 70% 60% 40% / 40% 60% 30% 70%", 
+        "50% 50% 50% 50% / 50% 50% 50% 50%" 
+      ],
+      boxShadow: [
+        "0 0 20px rgba(0,200,255,0.6)",
+        "0 0 35px rgba(0,220,255,0.8)",
+        "0 0 20px rgba(0,200,255,0.6)"
+      ],
+      transition: { duration: 7, ease: "linear", repeat: Infinity }
+    },
+  }
+};
 
 export default function VikiOrb() {
-  // Thinking state animation - pulsing orb with particles
   return (
-    <div style={{ 
-      width: 80, 
-      height: 80, 
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      {/* Outer glow ring */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: 'easeInOut'
-        }}
-        style={{
-          position: 'absolute',
-          width: 80,
-          height: 80,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0,212,255,0.3) 0%, transparent 70%)',
-        }}
+    <div style={container}>
+      {/* Glow ring */}
+      <motion.div 
+        style={glow} 
+        variants={variants.glow}
+        animate="thinking"
       />
-      
-      {/* Main orb */}
-      <motion.div
-        animate={{
-          scale: [1, 1.05, 1],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: 'easeInOut'
-        }}
-        style={{
-          width: 50,
-          height: 50,
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #006699 100%)',
-          boxShadow: '0 0 30px rgba(0, 212, 255, 0.5), inset 0 -10px 20px rgba(0, 0, 0, 0.3)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Inner highlight */}
-        <div style={{
-          position: 'absolute',
-          top: '15%',
-          left: '20%',
-          width: '30%',
-          height: '20%',
-          borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.4)',
-          filter: 'blur(3px)',
-        }} />
-      </motion.div>
-      
-      {/* Orbiting particles */}
-      {[0, 1, 2].map(i => (
-        <motion.div
-          key={i}
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 3 + i * 0.5,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          style={{
-            position: 'absolute',
-            width: 60 + i * 10,
-            height: 60 + i * 10,
-          }}
-        >
-          <motion.div
-            animate={{
-              opacity: [0.5, 1, 0.5],
-              scale: [0.8, 1.2, 0.8],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              delay: i * 0.3,
-            }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: '50%',
-              width: 6,
-              height: 6,
-              marginLeft: -3,
-              borderRadius: '50%',
-              background: '#00d4ff',
-              boxShadow: '0 0 10px #00d4ff',
-            }}
-          />
-        </motion.div>
-      ))}
-      
-      {/* Thinking indicator */}
-      <motion.div
-        animate={{
-          opacity: [0, 1, 0],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          times: [0, 0.5, 1],
-        }}
-        style={{
-          position: 'absolute',
-          bottom: -20,
-          fontSize: 10,
-          color: '#00d4ff',
-          letterSpacing: 2,
-        }}
-      >
-        ⚡
-      </motion.div>
+      {/* Core orb */}
+      <motion.div 
+        style={core} 
+        variants={variants.core}
+        animate="thinking"
+      />
+      {/* Inner pulse layer */}
+      <motion.div 
+        style={{ ...core, position: 'absolute', opacity: 0.5 }}
+        animate={{ scale: [0.95, 1.05, 0.95] }}
+        transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
+      />
     </div>
   );
 }

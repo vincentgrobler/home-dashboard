@@ -13,24 +13,21 @@ export default function WeatherCard() {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        // Fetch weather data
         const res = await fetch('https://wttr.in/Princes+Risborough?format=j1');
         const data = await res.json();
         
         const current = data.current_condition[0];
-        const weatherCode = parseInt(current.weatherCode);
+        const desc = current.weatherDesc[0].value.toLowerCase();
         
-        // Map weather codes to icons
+        // Map weather to icons
         let icon = '☀️';
-        if (weatherCode >= 200 && weatherCode < 300) icon = '⛈️';
-        else if (weatherCode >= 300 && weatherCode < 400) icon = '🌧️';
-        else if (weatherCode >= 500 && weatherCode < 600) icon = '🌧️';
-        else if (weatherCode >= 600 && weatherCode < 700) icon = '❄️';
-        else if (weatherCode >= 700 && weatherCode < 800) icon = '🌫️';
-        else if (current.weatherDesc[0].value.toLowerCase().includes('cloud')) icon = '☁️';
-        else if (current.weatherDesc[0].value.toLowerCase().includes('sun')) icon = '☀️';
-        else if (current.weatherDesc[0].value.toLowerCase().includes('rain')) icon = '🌧️';
-        else if (current.weatherDesc[0].value.toLowerCase().includes('overcast')) icon = '☁️';
+        if (desc.includes('cloud') || desc.includes('overcast')) icon = '☁️';
+        else if (desc.includes('rain') || desc.includes('drizzle')) icon = '🌧️';
+        else if (desc.includes('snow')) icon = '❄️';
+        else if (desc.includes('thunder')) icon = '⛈️';
+        else if (desc.includes('fog') || desc.includes('mist')) icon = '🌫️';
+        else if (desc.includes('sun') || desc.includes('clear')) icon = '☀️';
+        else if (desc.includes('partly')) icon = '⛅';
         
         setWeather({
           temp: current.temp_C,
@@ -44,27 +41,42 @@ export default function WeatherCard() {
     };
 
     fetchWeather();
-    const interval = setInterval(fetchWeather, 30 * 60 * 1000); // Every 30 min
+    const interval = setInterval(fetchWeather, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
   if (!weather) {
     return (
-      <div className="card weather-card">
-        <div className="weather-icon">🌤️</div>
-        <div className="weather-temp">--°</div>
-        <div className="weather-desc">Loading...</div>
+      <div className="weather-section">
+        <div className="weather-visual">
+          <span style={{ fontSize: '80px' }}>🌤️</span>
+        </div>
+        <div className="weather-info">
+          <div className="weather-temp">--°</div>
+          <div className="weather-desc">Loading...</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="card weather-card">
-      <div className="weather-icon">{weather.icon}</div>
-      <div className="weather-temp">{weather.temp}°</div>
-      <div className="weather-desc">
-        {weather.condition}<br />
-        Feels like {weather.feelsLike}°
+    <div className="weather-section">
+      <div className="weather-visual">
+        {weather.icon === '☁️' || weather.icon === '⛅' ? (
+          <div className="cloud-sun-icon">
+            <span className="sun-behind">☀️</span>
+            <span className="cloud-front">☁️</span>
+          </div>
+        ) : (
+          <span style={{ fontSize: '80px' }}>{weather.icon}</span>
+        )}
+      </div>
+      <div className="weather-info">
+        <div className="weather-temp">{weather.temp}°</div>
+        <div className="weather-desc">
+          Today will be {weather.condition.toLowerCase()}.<br/>
+          Feels like {weather.feelsLike}°
+        </div>
       </div>
     </div>
   );

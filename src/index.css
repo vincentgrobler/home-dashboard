@@ -235,6 +235,7 @@ body {
 /* Energy Cards */
 .energy-card {
   flex: 1;
+  min-width: 150px;
 }
 
 .energy-header {

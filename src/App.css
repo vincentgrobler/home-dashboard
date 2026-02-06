@@ -1,15 +1,24 @@
 .dashboard {
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 8px;
+  flex-shrink: 0;
 }
 
 .top-row {
   display: grid;
-  grid-template-columns: 200px 1fr 320px;
+  grid-template-columns: 220px 1fr 320px;
   gap: 20px;
   flex: 1;
   min-height: 0;
@@ -17,32 +26,87 @@
 
 .bottom-section {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 340px;
   gap: 20px;
-  height: 180px;
+  height: 140px;
+  flex-shrink: 0;
 }
 
 .bottom-left {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
 }
 
 .viki-orb-container {
-  width: 120px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .status-cards {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
 }
 
 .energy-panel {
   display: flex;
-  flex-direction: column;
   gap: 12px;
+}
+
+/* Weather Section - No background card */
+.weather-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 20px;
+}
+
+.weather-visual {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.cloud-sun-icon {
+  position: relative;
+  width: 100px;
+  height: 80px;
+}
+
+.sun-behind {
+  position: absolute;
+  font-size: 50px;
+  top: 0;
+  right: 0;
+  filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.5));
+}
+
+.cloud-front {
+  position: absolute;
+  font-size: 70px;
+  bottom: 0;
+  left: 0;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.weather-info {
+  text-align: center;
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: 200;
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.5;
 }
