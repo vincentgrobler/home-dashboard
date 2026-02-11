@@ -1,50 +1,10 @@
-import { useState, useEffect } from 'react';
-
-interface PurifierData {
-  name: string;
-  type: string;
-  power: boolean;
-  mode: string | null;
-  fan_level: number;
-  filter_life: number;
-  display: boolean;
-  supports_air_quality: boolean;
-  air_quality: number | null;
-  error?: string;
-}
-
-// API endpoint - adjust if running elsewhere
-const API_URL = import.meta.env.VITE_DASHBOARD_API_URL || 'http://localhost:5555';
+import { useCache } from '../hooks/useCache';
+import { fetchPurifierData } from '../utils/api';
+import type { PurifierData } from '../types';
 
 export default function AirPurifierCard() {
-  const [data, setData] = useState<PurifierData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/purifier`);
-      const json = await res.json();
-      
-      if (json.error) {
-        setError(json.error);
-      } else {
-        setData(json);
-        setError(null);
-      }
-    } catch (e) {
-      setError('Cannot connect to API');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-    // Refresh every 60 seconds
-    const interval = setInterval(fetchData, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  // Use cache with 60s TTL (matches device refresh rate)
+  const { data, loading, error } = useCache<PurifierData>('purifier-status', fetchPurifierData, 60000);
 
   const getModeIcon = (mode: string | null) => {
     switch (mode) {
@@ -74,7 +34,7 @@ export default function AirPurifierCard() {
     ));
   };
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="card purifier-card-compact">
         <div className="purifier-header">
@@ -87,6 +47,7 @@ export default function AirPurifierCard() {
     );
   }
 
+  // Handle both explicit error and null data (API down)
   if (error || !data) {
     return (
       <div className="card purifier-card-compact">
@@ -94,7 +55,7 @@ export default function AirPurifierCard() {
           <h3 className="purifier-title">🌬️ Air Purifier</h3>
         </div>
         <div style={{ textAlign: 'center', padding: '20px', color: '#888', fontSize: '12px' }}>
-          {error || 'No data'}
+          {error?.message || 'No data'}
           <br />
           <small style={{ opacity: 0.6 }}>Start dashboard_api.py</small>
         </div>

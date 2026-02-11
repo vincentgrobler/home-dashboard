@@ -8,7 +8,7 @@ interface StatusCardProps {
 }
 
 // Local dashboard API (runs on your network)
-const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL || 'http://localhost:8765';
+const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL || '';
 
 export default function StatusCard({ icon, label, type, deviceId }: StatusCardProps) {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
@@ -21,9 +21,7 @@ export default function StatusCard({ icon, label, type, deviceId }: StatusCardPr
         setState(navigator.onLine ? 'connected' : 'disconnected');
       } else if (type === 'firetv' && deviceId) {
         try {
-          const res = await fetch(`${LOCAL_API_URL}/api/firetv/${deviceId}/status`, {
-            mode: 'cors'
-          });
+          const res = await fetch(`${LOCAL_API_URL}/api/firetv/${deviceId}/status`);
           if (res.ok) {
             const data = await res.json();
             setIsOnline(data.online);
